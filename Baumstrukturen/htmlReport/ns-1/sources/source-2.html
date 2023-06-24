@@ -1,0 +1,228 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > EmptyTree</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">&lt;empty package name&gt;</a>
+</div>
+
+<h1>Coverage Summary for Class: EmptyTree (&lt;empty package name&gt;)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmptyTree</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;import org.junit.jupiter.api.Assertions.*
+&nbsp;
+&nbsp;
+&nbsp;sealed class  NumberTree{  //BAUM
+&nbsp;
+&nbsp;    abstract fun size() : Int
+&nbsp;    abstract fun contains(value : Int) : Boolean
+&nbsp;    abstract fun sum() : Int
+&nbsp;    abstract fun average():Double
+&nbsp;
+&nbsp;    abstract fun addSorted(value : Int):NumberTree
+&nbsp;
+&nbsp;    fun processNode(){
+&nbsp;        when(this){
+&nbsp;            is EmptyTree -&gt; {}
+&nbsp;            is DataNode -&gt; {println(&quot; ${this.data}&quot;)}
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    abstract fun processPreOrder()
+&nbsp;    abstract fun processPostOrder()
+&nbsp;    abstract fun processInOrder()
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+<b class="fc">&nbsp;object EmptyTree : NumberTree() {  //LEERER BAUM</b>
+&nbsp;
+<b class="fc">&nbsp;    override fun size() :Int = 0</b>
+<b class="fc">&nbsp;    override fun sum ():Int = 0</b>
+<b class="fc">&nbsp;    override fun contains(value : Int) : Boolean = false</b>
+<b class="fc">&nbsp;    override fun average():Double = 0.0</b>
+&nbsp;
+<b class="fc">&nbsp;    override fun addSorted(value : Int):DataNode = DataNode(value)</b>
+&nbsp;
+<b class="fc">&nbsp;    override fun processPreOrder(){ }</b>
+<b class="fc">&nbsp;    override fun  processPostOrder(){}</b>
+<b class="fc">&nbsp;    override fun  processInOrder(){}</b>
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;class DataNode(val data:Int, private val left:NumberTree = EmptyTree, private val right:NumberTree = EmptyTree):NumberTree() {
+&nbsp;
+&nbsp;
+&nbsp;    override fun size():Int = 1 + left.size() + right.size()
+&nbsp;
+&nbsp;    override fun sum():Int = data + left.sum() + right.sum()
+&nbsp;
+&nbsp;    override fun contains(value : Int): Boolean = data == value ||(value &lt; data &amp;&amp; left.contains(value)) ||(value &gt; data &amp;&amp; right.contains(value))
+&nbsp;
+&nbsp;    override fun average(): Double {
+&nbsp;        val sum:Double = data.toDouble() + left.sum() + right.sum()
+&nbsp;        val size:Int = 1 + left.size() + right.size()
+&nbsp;        return sum / size
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun addSorted(value : Int):NumberTree = if(value &lt; data) DataNode(data,left.addSorted(value) , right)
+&nbsp;                                                    else  DataNode(data, left, right.addSorted(value))
+&nbsp;
+&nbsp;    override fun processPreOrder(){
+&nbsp;        processNode()
+&nbsp;        left.processPreOrder()
+&nbsp;        right.processPreOrder()
+&nbsp;    }
+&nbsp;    override fun processPostOrder(){
+&nbsp;        left.processPostOrder()
+&nbsp;        right.processPostOrder()
+&nbsp;        processNode()
+&nbsp;    }
+&nbsp;    override fun  processInOrder(){
+&nbsp;        left.processInOrder()
+&nbsp;        processNode()
+&nbsp;        right.processInOrder()
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;fun main() {
+&nbsp;
+&nbsp;/*val root : NumberTree = DataNode(5,DataNode(3, DataNode(2)),
+&nbsp;    DataNode(4 ,DataNode(8,DataNode(10))))
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    println(&quot;Die Summe vom Baum ist : ${root.sum()}&quot;)
+&nbsp;    println(&quot;Der Baum enthält die 6 : ${root.contains(6)}&quot;)
+&nbsp;
+&nbsp;    val anotherTree = DataNode(5,
+&nbsp;        DataNode(11,DataNode(30),DataNode(4)),
+&nbsp;        DataNode(8,DataNode(10)))
+&nbsp;
+&nbsp;    */
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    var root:NumberTree = EmptyTree
+&nbsp;
+&nbsp;    root = root.addSorted(12)
+&nbsp;    root = root.addSorted(22)
+&nbsp;    root = root.addSorted(15)
+&nbsp;    root = root.addSorted(7)
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    //val anotherTree:Tree = root.addSorted(20)
+&nbsp;
+&nbsp;    println(&quot;Baum : ${root.sum()}&quot;)
+&nbsp;    println(&quot;Baum average : ${root.average()}&quot;)
+&nbsp;
+&nbsp;println(&quot;process : &quot;)
+&nbsp;    root.processPreOrder()
+&nbsp;
+&nbsp;    var yetAnotherTree : NumberTree = EmptyTree
+&nbsp;    yetAnotherTree = yetAnotherTree.addSorted(7)
+&nbsp;    yetAnotherTree = yetAnotherTree.addSorted(22)
+&nbsp;    yetAnotherTree = yetAnotherTree.addSorted(15)
+&nbsp;    yetAnotherTree = yetAnotherTree.addSorted(12)
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    //yetAnotherTree.processPreOrder()
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-24 22:30</div>
+</div>
+</body>
+</html>
